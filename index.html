@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculadora de Salarios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            text-align: center;
+        }
+
+        h1 {
+            background-color: #34c3d9;
+            color: white;
+            padding: 10px;
+        }
+
+        #employee-form {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            background-color: #34c3d9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #34c3d9;
+        }
+
+        #results {
+            margin: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #34c3d9;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        p {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculadora de Salarios</h1>
+
+    <div id="employee-form">
+        <label for="numEmployees">Número de Empleados:</label>
+        <input type="number" id="numEmployees">
+        <button onclick="addEmployees()">Ingresar Empleados</button>
+    </div>
+
+    <div id="results" style="display: none;">
+        <h2>Resultados</h2>
+        <table>
+            <thead>
+                <tr>
+		<th>Nombre: Gerber Alexander Asturias Tejaxún</th>
+		<th>Carnet: 0901-22-11992</th>
+		</tr>
+
+		<tr>
+                    <th>Nombre</th>
+                    <th>Salario Mensual</th>
+                    <th>IGSS</th>
+                    <th>Bonificación (horas)</th>
+                    <th>Salario a Recibir</th>
+                    <th>Boleto de Ornato</th>
+                </tr>
+            </thead>
+            <tbody id="results-body"></tbody>
+        </table>
+
+        <p>Suma de Salarios: <span id="total-salary"></span></p>
+        <p>Promedio de Salarios: <span id="average-salary"></span></p>
+    </div>
+
+    <script>
+        function calculateBoletoDeOrnato(salary) {
+            if (salary >= 500.01 && salary <= 1000) {
+                return 10;
+            } else if (salary >= 1000.01 && salary <= 3000) {
+                return 15;
+            } else if (salary >= 3000.01 && salary <= 6000) {
+                return 50;
+            } else if (salary >= 6000.01 && salary <= 9000) {
+                return 75;
+            } else if (salary >= 9000.01 && salary <= 12000) {
+                return 100;
+	    } else if (salary >= 12000.01) {
+                return 150;
+		}
+        }
+
+        function addEmployees() {
+            const numEmployees = parseInt(document.getElementById("numEmployees").value);
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.style.display = "block";
+
+            let totalSalary = 0;
+            let employeeCount = 0;
+
+            for (let i = 0; i < numEmployees; i++) {
+                const name = prompt(`Nombre del Empleado ${i + 1}:`);
+                const salary = parseFloat(prompt(`Salario Mensual de ${name}:`));
+                const hoursWorked = parseInt(prompt(`Horas Extras de ${name} (ingrese valores positivos, 0 para finalizar):`));
+
+                if (hoursWorked < 0) {
+                    alert("¡El número de horas extras no puede ser negativo!");
+                    i--;
+                    continue;
+                }
+
+                const igss = (salary * 0.0483); // 4.83% de IGSS
+                const bonus = (hoursWorked * 10); // Bonificación de Q10 por cada hora extra
+                const netSalary = salary - igss + bonus;
+                const boletoDeOrnato = calculateBoletoDeOrnato(salary);
+
+                totalSalary += netSalary;
+                employeeCount++;
+
+                // Mostrar resultados en la tabla
+                const resultsTable = document.getElementById("results-body");
+                const row = resultsTable.insertRow();
+                row.insertCell(0).textContent = name;
+                row.insertCell(1).textContent = salary;
+                row.insertCell(2).textContent = igss;
+                row.insertCell(3).textContent = bonus;
+                row.insertCell(4).textContent = netSalary;
+                row.insertCell(5).textContent = boletoDeOrnato;
+            }
+
+            const totalSalaryElement = document.getElementById("total-salary");
+            const averageSalaryElement = document.getElementById("average-salary");
+            totalSalaryElement.textContent = totalSalary;
+            averageSalaryElement.textContent = (totalSalary / employeeCount).toFixed(2);
+        }
+    </script>
+</body>
+</html>
